@@ -1,28 +1,30 @@
 var main = {
-    init: function () {
+    init : function () {
         var _this = this;
-        $('#btn_save').on('click', function () {
+        $('#btn-save').on('click', function () {
             _this.save();
         });
     },
     save : function () {
-        var data  = {
+        var data = {
             title: $('#title').val(),
             author: $('#author').val(),
             content: $('#content').val()
-        }
+        };
 
-        $ajax({
+        $.ajax({
             type: 'POST',
             url: '/api/v1/posts',
             dataType: 'json',
-            content: 'application/json ; charser=utf-8',
-            data: JSON.stringify(data),
-        }).done(function () {
+            contentType:'application/json; charset=utf-8',
+            data: JSON.stringify(data)
+        }).done(function() {
             alert('글이 등록되었습니다.');
-            window.location.href='/';
+            window.location.href = '/';
         }).fail(function (error) {
             alert(JSON.stringify(error));
-        })
+        });
     }
 }
+
+main.init();
