@@ -1,5 +1,6 @@
 package com.coda.stylestore.web;
 
+import com.coda.stylestore.config.auth.LoginUser;
 import com.coda.stylestore.config.auth.dto.SessionUser;
 import com.coda.stylestore.service.posts.PostsService;
 import com.coda.stylestore.web.dto.PostsResponseDto;
@@ -20,11 +21,11 @@ public class IndexController {
     private final HttpSession httpSession;
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
-        // CustomOAuth2UserService 로그인 성공시 SessionUser를 세션에 저장
-        SessionUser user = (SessionUser) httpSession
-                .getAttribute("user");
+        // CustomOAuth2UserService 로그인 성공시 SessionUser를 세션에 저장 -> @LoginUser 어노테이션화
+//        SessionUser user = (SessionUser) httpSession
+//                .getAttribute("user");
 
         if (user != null) {
             model.addAttribute("user_name", user.getName());
