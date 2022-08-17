@@ -1,11 +1,15 @@
 package com.coda.stylestore.web;
 
+import com.coda.stylestore.config.auth.SecurityConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -15,18 +19,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * @EnableJpaAuditing 추가 후 에러
- *  참고 https://xlffm3.github.io/spring%20&%20spring%20boot/JPAError/
+ * 참고 https://xlffm3.github.io/spring%20&%20spring%20boot/JPAError/
  */
 
+
+//@WebMvcTest 는 CustomOAuthUserService 를 스캔하지 않음..
 @MockBean(JpaMetamodelMappingContext.class)
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = HelloController.class)
+@WebMvcTest(controllers = HelloController.class,
+        excludeFilters = {
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE
+                        , classes = SecurityConfig.class)
+        })
 public class HelloControllerTest {
     @Autowired
     private MockMvc mvc;
 
     @Test
-    public void hello가_리턴된다() throws Exception{
+    @WithMockUser(roles="USER")
+    public void hello가_리턴된다() throws Exception {
         String hello = "hello";
         mvc.perform(get("/hello"))
                 .andExpect(status().isOk())
@@ -34,7 +45,8 @@ public class HelloControllerTest {
     }
 
     @Test
-    public void helloDto가_리턴된다() throws Exception{
+    @WithMockUser(roles="USER")
+    public void helloDto가_리턴된다() throws Exception {
         String name = "hello";
         int amount = 1000;
 
